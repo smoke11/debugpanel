@@ -14,7 +14,6 @@ import java.io.PrintStream;
 public class DebugViewPanel {
     private static JFrame window;
     private static int debugLevel;//0-no debug, 1-errors, 2-most important info, 3-less and etc.
-    public static final int DEBUGLVL_NO_INFO = 0;
     public static final int DEBUGLVL_ERRORS = 1;
     public static final int DEBUGLVL_LESSINFO = 2;
     public static final int DEBUGLVL_MOREINFO = 3;

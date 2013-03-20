@@ -14,27 +14,32 @@ import java.io.PrintStream;
 public class DebugViewPanel {
     private static JFrame window;
     private static int debugLevel;//0-no debug, 1-errors, 2-most important info, 3-less and etc.
+    public static final int DEBUGLVL_NO_INFO = 0;
+    public static final int DEBUGLVL_ERRORS = 1;
+    public static final int DEBUGLVL_LESSINFO = 2;
+    public static final int DEBUGLVL_MOREINFO = 3;
+
     public static void createWindow(int locX, int locY, int sizeX, int sizeY, int debuglevel)
     {
-            //Create and set up the debug window.
-            JTextArea ta = new JTextArea();
-            ta.setSize(sizeX-100,sizeY);
-            TextAreaOutputStream taos = new TextAreaOutputStream( ta, Integer.MAX_VALUE );
-            PrintStream ps = new PrintStream( taos );
-            System.setOut( ps );
-            System.setErr( ps );
-            window = new JFrame ("Debug Console");
-            window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            JScrollPane jpane = new JScrollPane( ta );
-            jpane.setSize(sizeX-100,sizeY);
-            window.getContentPane().add ( jpane );
-            window.setVisible(true);
-            window.setSize(new Dimension(sizeX, sizeY));
-            window.setLocation(locX, locY);
-            debugLevel=debuglevel;
-            System.out.println("Initializing Debug Window.");
-            System.out.println("Showing messages for debug level == "+ debugLevel);
-            System.out.println("------");
+        //Create and set up the debug window.
+        debugLevel=debuglevel;
+        JTextArea ta = new JTextArea();
+        ta.setSize(sizeX-100,sizeY);
+        TextAreaOutputStream taos = new TextAreaOutputStream( ta, Integer.MAX_VALUE );
+        PrintStream ps = new PrintStream( taos );
+        System.setOut( ps );
+        System.setErr( ps );
+        window = new JFrame ("Debug Console");
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        JScrollPane jpane = new JScrollPane( ta );
+        jpane.setSize(sizeX-100,sizeY);
+        window.getContentPane().add ( jpane );
+        window.setVisible(true);
+        window.setSize(new Dimension(sizeX, sizeY));
+        window.setLocation(locX, locY);
+        System.out.println("Initializing Debug Window.");
+        System.out.println("Showing messages for debug level == "+ debugLevel);
+        System.out.println("------");
     }
     public static void writeDebug(int level, String classname, String message)
     {
@@ -42,3 +47,4 @@ public class DebugViewPanel {
             System.out.println(classname+": "+message);
     }
 }
+

@@ -24,6 +24,8 @@ public class DebugView{
     private static int debugLevel=2;//0-no debug, 1-errors, 2-most important info, 3-less and etc.
     private static JTextField find;
     private static JTextArea textArea;
+    private static String lastFind="";
+    private static int lastIndex=0;
     public static final int DEBUGLVL_ERRORS = 1;
     public static final int DEBUGLVL_LESSINFO = 2;
     public static final int DEBUGLVL_MOREINFO = 3;
@@ -62,24 +64,7 @@ public class DebugView{
 
                    String text = textArea.getText();
                    String findtext = find.getText();
-                   int start=0,  end=text.length(), endfind = findtext.length();
-                    Highlighter h = textArea.getHighlighter();
-                    h.removeAllHighlights();
-                   while(start<end)
-                   {
-                       start=text.indexOf(findtext,start);
-                       if(start==-1)
-                           break;
-                       Highlighter.HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.GREEN);
-                       try {
-                           h.addHighlight(start, start+endfind, painter);
-                       } catch (BadLocationException e1) {
-                           e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                       }
-                       textArea.setSelectionStart(start);
-                       textArea.setSelectionEnd(end);
-                       start+=endfind;
-                   }
+                    findWords(findtext,text);
                 }
             }
             @Override
@@ -144,7 +129,43 @@ public class DebugView{
         if(level<=debugLevel)
             System.out.println("[L"+level+"] "+classname+": "+message);
     }
+    private static void findWords(String findtext,String text)
+    {
 
+        int start=0,  end=text.length(), endfind = findtext.length(), i=0;
+        Highlighter h = textArea.getHighlighter();
+        h.removeAllHighlights();
+        if(findtext==lastFind)
+            lastIndex++;
+        else
+        {
+            lastFind=findtext;
+            lastIndex=0;
+        }
+        while(start<end)
+        {
+            start=text.indexOf(findtext,start);
+            if(start==-1)
+                break;
+            Highlighter.HighlightPainter painter;
+            if(lastIndex==i)
+            {
+                textArea.setCaretPosition(start);
+                painter = new DefaultHighlighter.DefaultHighlightPainter(Color.ORANGE);
+            }
+            else
+                painter = new DefaultHighlighter.DefaultHighlightPainter(Color.GREEN);
+            try {
+                h.addHighlight(start, start+endfind, painter);
+            } catch (BadLocationException e1) {
+                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+            textArea.setSelectionStart(start);
+            textArea.setSelectionEnd(end);
+            start+=endfind;
+            i++;
+        }
+    }
 
 }
 

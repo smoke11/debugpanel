@@ -5,10 +5,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
 import java.awt.*;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.io.PrintStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,8 +32,8 @@ public class DebugView{
         //Create and set up the debug window.
         debugLevel=debuglevel;
         textArea = new JTextArea();
-        textArea.setSize(sizeX-100,sizeY);
-        textArea.setEditable(false);
+        textArea.setEditable(true);
+        textArea.setFocusable(true);
         TextAreaOutputStream taos = new TextAreaOutputStream( textArea, Integer.MAX_VALUE );
         PrintStream ps = new PrintStream( taos );
         System.setOut( ps );
@@ -75,6 +72,19 @@ public class DebugView{
 
         JScrollPane jpane = new JScrollPane( textArea );
         jpane.setSize(sizeX-100,sizeY);
+        jpane.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                textArea.repaint();
+                find.repaint();
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                textArea.repaint();
+                find.repaint();
+            }
+        });
         jpane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
             @Override
             public void adjustmentValueChanged(AdjustmentEvent e) {
@@ -132,10 +142,10 @@ public class DebugView{
     private static void findWords(String findtext,String text)
     {
 
-        int start=0,  end=text.length(), endfind = findtext.length(), i=0;
+        int start=0,  end=text.length(), endfind = findtext.length(), i=0, caretposition=-1;
         Highlighter h = textArea.getHighlighter();
         h.removeAllHighlights();
-        if(findtext==lastFind)
+        if(findtext.equals(lastFind))
             lastIndex++;
         else
         {
@@ -150,11 +160,12 @@ public class DebugView{
             Highlighter.HighlightPainter painter;
             if(lastIndex==i)
             {
-                textArea.setCaretPosition(start);
+                caretposition=start;
                 painter = new DefaultHighlighter.DefaultHighlightPainter(Color.ORANGE);
             }
             else
                 painter = new DefaultHighlighter.DefaultHighlightPainter(Color.GREEN);
+
             try {
                 h.addHighlight(start, start+endfind, painter);
             } catch (BadLocationException e1) {
@@ -165,6 +176,8 @@ public class DebugView{
             start+=endfind;
             i++;
         }
+        if(caretposition>0)
+            textArea.setCaretPosition(caretposition);
     }
 
 }

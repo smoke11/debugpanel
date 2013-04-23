@@ -7,6 +7,7 @@ import javax.swing.text.Highlighter;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.PrintStream;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,6 +27,7 @@ public class DebugView{
     public static final int DEBUGLVL_ERRORS = 1;
     public static final int DEBUGLVL_LESSINFO = 2;
     public static final int DEBUGLVL_MOREINFO = 3;
+    private static Date date;
 
     public static JFrame createWindow(int locX, int locY, int sizeX, int sizeY, int debuglevel)
     {
@@ -127,17 +129,18 @@ public class DebugView{
         panel.setPreferredSize(new Dimension(sizeX,sizeY));
         panel.add(jpane);
         System.out.println("------");
-        System.out.println("Initializing Debug Window.");
+        System.out.println("Initializing Debug Panel.");
         System.out.println("Showing messages for debug level == "+ debugLevel);
         System.out.println("------");
         return panel;
     }
-    public static void setDebugLevel(int level)  {debugLevel=level;}
+    public static void setDebugLevel(int level)  {debugLevel=level; System.out.println("Showing messages for debug level == "+ debugLevel);}
 
     public static void writeDebug(int level, String classname, String message)
     {
+        date = new Date();
         if(level<=debugLevel)
-            System.out.println("[L"+level+"] "+classname+": "+message);
+            System.out.println(date.getTime()+"[L"+level+"] "+classname+": "+message);
     }
     private static void findWords(String findtext,String text)
     {
